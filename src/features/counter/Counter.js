@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   decrement,
   increment,
+  reset,
   incrementByAmount,
   incrementAsync,
   selectCount,
@@ -32,13 +33,20 @@ export function Counter() {
         >
           -
         </button>
+        <button
+          className={styles.button}
+          aria-label="Decrement value"
+          onClick={() => dispatch(reset())}
+        >
+          reset
+        </button>
       </div>
       <div className={styles.row}>
         <input
           className={styles.textbox}
           aria-label="Set increment amount"
           value={incrementAmount}
-          onChange={e => setIncrementAmount(e.target.value)}
+          onChange={(e) => setIncrementAmount(e.target.value)}
         />
         <button
           className={styles.button}
