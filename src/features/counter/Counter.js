@@ -7,13 +7,18 @@ import {
   incrementByAmount,
   incrementAsync,
   selectCount,
+  fetchRandomNumber,
 } from './counterSlice';
 import styles from './Counter.module.css';
 
 export function Counter() {
-  const count = useSelector(selectCount);
+  const counter = useSelector(selectCount);
   const dispatch = useDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
+
+  if (counter.isLoading) {
+    return <div>Loading.....</div>;
+  }
 
   return (
     <div>
@@ -25,7 +30,7 @@ export function Counter() {
         >
           +
         </button>
-        <span className={styles.value}>{count}</span>
+        <span className={styles.value}>{counter.value}</span>
         <button
           className={styles.button}
           aria-label="Decrement value"
@@ -35,10 +40,10 @@ export function Counter() {
         </button>
         <button
           className={styles.button}
-          aria-label="Decrement value"
+          aria-label="Reset value"
           onClick={() => dispatch(reset())}
         >
-          reset
+          Reset
         </button>
       </div>
       <div className={styles.row}>
@@ -57,10 +62,10 @@ export function Counter() {
           Add Amount
         </button>
         <button
-          className={styles.asyncButton}
-          onClick={() => dispatch(incrementAsync(Number(incrementAmount) || 0))}
+          className={styles.button}
+          onClick={() => dispatch(fetchRandomNumber())}
         >
-          Add Async
+          Fetch from server
         </button>
       </div>
     </div>

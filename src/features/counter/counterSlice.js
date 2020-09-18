@@ -1,20 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-// store = {
-//   counter: 0,
-//   name: 'aman',
-// };
-// export const nameSlice = createSlice({
-//   name: 'name',
-//   initialState: {
-//     value: 'aman',
-//   },
-// });
+export const fetchRandomNumber = createAsyncThunk(
+  'numbers/fetchRandomNumber',
+  async (data, thunkAPI) => {
+    const response = await fetch('/api/randomnumber');
+    return await response.json();
+  }
+);
 
 export const counterSlice = createSlice({
   name: 'counter',
   initialState: {
     value: 0,
+    isLoading: false,
   },
   reducers: {
     increment: (state) => {
@@ -34,13 +32,26 @@ export const counterSlice = createSlice({
       state.value = 0;
     },
   },
+  extraReducers: {
+    [fetchRandomNumber.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.value += action.payload;
+    },
+    [fetchRandomNumber.reject]: (state, action) => {
+      console.log('api call rejected');
+      state.isLoading = false;
+    },
+    [fetchRandomNumber.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+  },
 });
 
 export const {
   increment,
   decrement,
-  incrementByAmount,
   reset,
+  incrementByAmount,
 } = counterSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -56,6 +67,9 @@ export const incrementAsync = (amount) => (dispatch) => {
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state) => state.counter.value)`
-export const selectCount = (state) => state.counter.value;
+export const selectCount = (state) => ({
+  value: state.counter.value,
+  isLoading: state.counter.isLoading,
+});
 
 export default counterSlice.reducer;
